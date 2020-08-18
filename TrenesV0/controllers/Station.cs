@@ -1,16 +1,24 @@
-﻿namespace TrenesV0
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TrenesV0.controllers
 {
     public class Station
     {
-        public long id { get; set; }
-        public int espacio { get; set; }
+        public long nroEstacion { get; set; }
+        public long espacio { get; set; }
         public string nombre { get; set; }
-
-        public Station(long id, int espacio, string nombre)
+        
+        public List<MaterialRodante> materiales { get; set; }
+        public Station(long nroEstacion, long espacio, string nombre)
         {
-            this.id = id;
-            this.nombre = nombre;
+            this.nroEstacion = nroEstacion;
             this.espacio = espacio;
+            this.nombre = nombre;
+            this.materiales = new List<MaterialRodante>();
         }
     }
 }

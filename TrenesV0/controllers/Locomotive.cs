@@ -1,18 +1,18 @@
-﻿namespace TrenesV0.views
-{
-    public class Locomotive
-    {
-        public long id { get; set; }
-        public string locomotora { get; set; }
-        public long fuerza { get; set; }
-        public long estacion_actual { get; set; }
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-        public Locomotive(long id, string locomotora, long fuerza, long estacion_actual)
+namespace TrenesV0.controllers
+{
+    public class Locomotive : MaterialRodante
+    {
+
+        public long fuerza { get; set; }
+        public Locomotive(long id, string marca, long peso, long fuerza): base(id,marca,peso)
         {
-            this.id = id;
-            this.locomotora = locomotora;
             this.fuerza = fuerza;
-            this.estacion_actual = estacion_actual;
         }
     }
 }
