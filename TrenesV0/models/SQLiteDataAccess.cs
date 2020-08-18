@@ -8,6 +8,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using TrenesV0.views;
 
 namespace TrenesV0
@@ -42,13 +43,36 @@ namespace TrenesV0
             }
             return null;
         }
+
         //obtiene la lista de estaciones
         public static List<Station> getStations()
         {
-            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            using (SQLiteConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var query = cnn.Query<Station>("SELECT * FROM estacion");
-                return query.ToList();
+                List<Station> estaciones = new List<Station>();
+                try
+                {
+                    var query = "SELECT * FROM estacion";
+                    cnn.Open();
+                    using (var cmd = new SQLiteCommand(query, cnn))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                            while (reader.Read())
+                            {
+                                long id = long.Parse(reader[0].ToString());
+                                int espacio = Int32.Parse(reader[1].ToString());
+                                string nombre = reader[2].ToString();
+                                Station estacion = new Station(id, espacio, nombre);
+                                estaciones.Add(estacion);
+                            }
+                    }
+                    cnn.Close();
+                }
+                catch( Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                return estaciones;
             }
         }
         //obtiene las locomotoras que se encuentran en una estacion especifica
