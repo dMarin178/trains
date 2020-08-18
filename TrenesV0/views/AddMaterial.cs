@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TrenesV0.controllers;
 
 namespace TrenesV0.views
 {
@@ -23,7 +24,7 @@ namespace TrenesV0.views
         {
             for (int i = 0; i < stations.Count; i++)
             {
-                cmbEstacion.Items.Add(stations[i].id + "-" + stations[i].nombre);
+                cmbEstacion.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
             }
             comboBox1.Items.Add("Locomotora");
             comboBox1.Items.Add("Carro");
@@ -36,7 +37,7 @@ namespace TrenesV0.views
             string[] selectedStationSplited = selectedStation.Split('-');
             for ( int i=0; i< stations.Count; i++)
             {
-                if(stations[i].id.ToString() == selectedStationSplited[0])
+                if(stations[i].nroEstacion.ToString() == selectedStationSplited[0])
                 {
                     label6.Text = "Espacio disponible : " + stations[i].espacio;
                 }

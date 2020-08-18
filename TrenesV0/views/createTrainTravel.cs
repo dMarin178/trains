@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TrenesV0.controllers;
 
 namespace TrenesV0.views
 {
@@ -26,9 +27,9 @@ namespace TrenesV0.views
         //desplega todas las estaciones para elegir la estacion de origen
         private void displayEstacionOrigen()
         {
-            for(int i=0; i < stations.Count; i++)
+            for (int i = 0; i < stations.Count; i++)
             {
-                cmbEstacionOrigen.Items.Add(stations[i].id + "-" + stations[i].nombre);
+                cmbEstacionOrigen.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
             }
         }
         //desplega todas las estaciones para mostrar sus carros
@@ -36,7 +37,7 @@ namespace TrenesV0.views
         {
             for (int i = 0; i < stations.Count; i++)
             {
-                cmbEstacion.Items.Add(stations[i].id + "-" + stations[i].nombre);
+                cmbEstacion.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
             }
         }
         //despliega todas las estaciones, para seleccionar el destino
@@ -44,7 +45,7 @@ namespace TrenesV0.views
         {
             for (int i = 0; i < stations.Count; i++)
             {
-                cmbEstacionDestino.Items.Add(stations[i].id + "-" + stations[i].nombre);
+                cmbEstacionDestino.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
             }
         }
         //despliega las prioridades
@@ -61,21 +62,28 @@ namespace TrenesV0.views
             cmbLocomotora.BeginUpdate();
             for (int i = 0; i < locomotives.Count; i++)
             {
-                cmbLocomotora.Items.Add(locomotives[i].id +"-"+ locomotives[i].locomotora);
+                cmbLocomotora.Items.Add("Locomotora: " + locomotives[i].idMaterialR + " marca: " + locomotives[i].marca + " fuerza: " + locomotives[i].fuerza); ;
             }
             cmbLocomotora.EndUpdate();
         }
         //despliega toda la informacion de los carros, tanto locomotoras como materiales rodantes
-        private void displayListDisponibles(List<Locomotive> locomotives, List<Material> materials)
+        private void displayListDisponibles(List<Locomotive> locomotives, List<Carro> carro)
         {
             listDisponibles.BeginUpdate();
-            for (int i = 0; i < locomotives.Count; i++)
+            if (locomotives != null)
             {
-                listDisponibles.Items.Add(locomotives[i].id +"-"+ locomotives[i].locomotora);
+                for (int i = 0; i < locomotives.Count; i++)
+                {
+                    listDisponibles.Items.Add("Locomotora: " + locomotives[i].idMaterialR + " marca: " + locomotives[i].marca + " fuerza: " + locomotives[i].fuerza);
+                }
             }
-            for (int j = 0; j < materials.Count; j++)
+            if (carro != null)
             {
-                listDisponibles.Items.Add(materials[j].id +"-"+ materials[j].material);
+
+                for (int j = 0; j < carro.Count; j++)
+                {
+                    listDisponibles.Items.Add("Carro: " + carro[j].idMaterialR + " marca: " + carro[j].marca + " peso: " + carro[j].peso + " lleva: " + carro[j].idProducto);
+                }
             }
             listDisponibles.Items.Remove(cmbLocomotora.SelectedItem);
             listDisponibles.EndUpdate();
@@ -84,7 +92,7 @@ namespace TrenesV0.views
         private void cmbEstacionOrigen_SelectedIndexChanged(object sender, EventArgs e)
         {
             cmbLocomotora.Items.Clear();
-            string selectedStation = (string) cmbEstacionOrigen.SelectedItem;
+            string selectedStation = (string)cmbEstacionOrigen.SelectedItem;
             string[] selectedStationSplited = selectedStation.Split('-');
             int stationID;
             int.TryParse(selectedStationSplited[0], out stationID);
@@ -100,7 +108,7 @@ namespace TrenesV0.views
             int stationID;
             int.TryParse(selectedStationSplited[0], out stationID);
             List<Locomotive> locos = SQLiteDataAccess.getLocomotives(stationID);
-            List<Material> materiales = SQLiteDataAccess.getMaterial(stationID);
+            List<Carro> materiales = SQLiteDataAccess.getCarro(stationID);
             displayListDisponibles(locos, materiales);
         }
         private void btnAñadir_Click(object sender, EventArgs e)
@@ -123,19 +131,44 @@ namespace TrenesV0.views
         private void btnCrear_Click(object sender, EventArgs e)
         {
             var fecha = datePick.Value;
-            var origen = cmbEstacionOrigen.SelectedItem;
-            var locomotora = cmbLocomotora.SelectedItem;
-            var destino = cmbEstacionDestino.SelectedItem;
-            var prioridad = cmbPrioridad.SelectedItem;
+            var origencmb = cmbEstacionOrigen.SelectedItem;
+            var locomotoracmb = cmbLocomotora.SelectedItem;
+            var destinocmb = cmbEstacionDestino.SelectedItem;
+            var prioridadcmb = cmbPrioridad.SelectedItem;
             var carros = listAñadidos.Items;
-            if(origen!=null&&locomotora!=null&&destino!=null&& prioridad != null)
+            var rutCreador = Login.SetValueFortxtUsuario;
+            if (origencmb != null && locomotoracmb != null && destinocmb != null && prioridadcmb != null)
             {
-                //Query
+                string locomotora = ((string)locomotoracmb).Split()[1];
+                long.TryParse(locomotora, out long locomotoraid);
+                long trenid = SQLiteDataAccess.getLastTrain() + 1;
+                var tren = new Tren(trenid, locomotoraid, rutCreador);
+                SQLiteDataAccess.setTren(tren);
+                string origen = ((string)origencmb).Trim().Split('-')[0];
+                long.TryParse(origen, out long origenEstacion);
+                string destino = ((string)destinocmb).Trim().Split('-')[0];
+                long.TryParse(destino, out long destinoEstacion);
+                long viajeid = SQLiteDataAccess.getLastViaje() + 1;
+                var viaje = new Viaje(viajeid, trenid, origenEstacion, destinoEstacion, rutCreador, fecha);
+                SQLiteDataAccess.setViaje(viaje);
+                for (int i = 0; i < carros.Count; i++)
+                {
+                    string carro = ((string)carros[i]).Split()[1];
+                    long carroid;
+                    long.TryParse(carro, out carroid);
+                    SQLiteDataAccess.setTrenMaterialRodante(trenid, carroid);
+                }
+
             }
             else
             {
-                //saltar mensaje de error
+                //saltar mensaje de error, agregar un errorprovider a la vista
             }
+        }
+
+        private void createTrainRide_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
