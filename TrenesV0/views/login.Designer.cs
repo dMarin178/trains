@@ -54,9 +54,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(83, 67);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 13);
+            this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Nombre de usuario:";
+            this.label1.Text = "Rut Usuario";
             // 
             // label2
             // 
@@ -102,7 +102,6 @@
             this.btnAdminLogin.TabIndex = 5;
             this.btnAdminLogin.Text = "Iniciar como administrador";
             this.btnAdminLogin.UseVisualStyleBackColor = true;
-            //this.btnAdminLogin.Click += new System.EventHandler(this.btnAdminLogin_Click);
             // 
             // Login
             // 
