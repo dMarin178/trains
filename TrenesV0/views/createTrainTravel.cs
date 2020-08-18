@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TrenesV0.controllers;
 
 namespace TrenesV0.views
 {
@@ -29,7 +28,7 @@ namespace TrenesV0.views
         {
             for(int i=0; i < stations.Count; i++)
             {
-                cmbEstacionOrigen.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
+                cmbEstacionOrigen.Items.Add(stations[i].id + "-" + stations[i].nombre);
             }
         }
         //desplega todas las estaciones para mostrar sus carros
@@ -37,7 +36,7 @@ namespace TrenesV0.views
         {
             for (int i = 0; i < stations.Count; i++)
             {
-                cmbEstacion.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
+                cmbEstacion.Items.Add(stations[i].id + "-" + stations[i].nombre);
             }
         }
         //despliega todas las estaciones, para seleccionar el destino
@@ -45,7 +44,7 @@ namespace TrenesV0.views
         {
             for (int i = 0; i < stations.Count; i++)
             {
-                cmbEstacionDestino.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
+                cmbEstacionDestino.Items.Add(stations[i].id + "-" + stations[i].nombre);
             }
         }
         //despliega las prioridades
@@ -62,28 +61,21 @@ namespace TrenesV0.views
             cmbLocomotora.BeginUpdate();
             for (int i = 0; i < locomotives.Count; i++)
             {
-                cmbLocomotora.Items.Add("Locomotora: " + locomotives[i].idMaterialR + " marca: " + locomotives[i].marca + " fuerza: " + locomotives[i].fuerza); ;
+                cmbLocomotora.Items.Add(locomotives[i].id +"-"+ locomotives[i].locomotora);
             }
             cmbLocomotora.EndUpdate();
         }
         //despliega toda la informacion de los carros, tanto locomotoras como materiales rodantes
-        private void displayListDisponibles(List<Locomotive> locomotives, List<Carro> carro)
+        private void displayListDisponibles(List<Locomotive> locomotives, List<Material> materials)
         {
             listDisponibles.BeginUpdate();
-            if (locomotives != null)
+            for (int i = 0; i < locomotives.Count; i++)
             {
-                for (int i = 0; i < locomotives.Count; i++)
-                {
-                    listDisponibles.Items.Add("Locomotora: " + locomotives[i].idMaterialR + " marca: " + locomotives[i].marca + " fuerza: " + locomotives[i].fuerza);
-                }
+                listDisponibles.Items.Add(locomotives[i].id +"-"+ locomotives[i].locomotora);
             }
-            if (carro != null)
+            for (int j = 0; j < materials.Count; j++)
             {
-
-                for (int j = 0; j < carro.Count; j++)
-                {
-                    listDisponibles.Items.Add("Carro: " + carro[j].idMaterialR + " marca: " + carro[j].marca + " peso: " + carro[j].peso + " lleva: " + carro[j].idProducto);
-                }
+                listDisponibles.Items.Add(materials[j].id +"-"+ materials[j].material);
             }
             listDisponibles.Items.Remove(cmbLocomotora.SelectedItem);
             listDisponibles.EndUpdate();
@@ -108,7 +100,7 @@ namespace TrenesV0.views
             int stationID;
             int.TryParse(selectedStationSplited[0], out stationID);
             List<Locomotive> locos = SQLiteDataAccess.getLocomotives(stationID);
-            List<Carro> materiales = SQLiteDataAccess.getCarro(stationID);
+            List<Material> materiales = SQLiteDataAccess.getMaterial(stationID);
             displayListDisponibles(locos, materiales);
         }
         private void btnAñadir_Click(object sender, EventArgs e)
@@ -131,38 +123,18 @@ namespace TrenesV0.views
         private void btnCrear_Click(object sender, EventArgs e)
         {
             var fecha = datePick.Value;
-            var origencmb = cmbEstacionOrigen.SelectedItem;
-            var locomotoracmb = cmbLocomotora.SelectedItem;
-            var destinocmb = cmbEstacionDestino.SelectedItem;
-            var prioridadcmb = cmbPrioridad.SelectedItem;
+            var origen = cmbEstacionOrigen.SelectedItem;
+            var locomotora = cmbLocomotora.SelectedItem;
+            var destino = cmbEstacionDestino.SelectedItem;
+            var prioridad = cmbPrioridad.SelectedItem;
             var carros = listAñadidos.Items;
-            var rutCreador = Login.SetValueFortxtUsuario;
-            if (origencmb!=null&&locomotoracmb!=null&&destinocmb!=null&& prioridadcmb!= null)
+            if(origen!=null&&locomotora!=null&&destino!=null&& prioridad != null)
             {
-                string locomotora = ((string)locomotoracmb).Split()[1];
-                long.TryParse(locomotora, out long locomotoraid);
-                long trenid = SQLiteDataAccess.getLastTrain() + 1;
-                var tren = new Tren(trenid,locomotoraid,rutCreador);
-                SQLiteDataAccess.setTren(tren);
-                string origen = ((string)origencmb).Trim().Split('-')[0];
-                long.TryParse(origen, out long origenEstacion);
-                string destino = ((string)destinocmb).Trim().Split('-')[0];
-                long.TryParse(destino, out long destinoEstacion);
-                long viajeid = SQLiteDataAccess.getLastViaje() + 1;
-                var viaje = new Viaje(viajeid, trenid, origenEstacion, destinoEstacion, rutCreador, fecha);
-                SQLiteDataAccess.setViaje(viaje);
-                for (int i = 0; i < carros.Count; i++)
-                {
-                    string carro = ((string)carros[i]).Split()[1];
-                    long carroid;
-                    long.TryParse(carro, out carroid);
-                    SQLiteDataAccess.setTrenMaterialRodante(trenid, carroid);
-                }
-
+                //Query
             }
             else
             {
-                //saltar mensaje de error, agregar un errorprovider a la vista
+                //saltar mensaje de error
             }
         }
     }

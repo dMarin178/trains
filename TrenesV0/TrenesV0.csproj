@@ -71,17 +71,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="controllers\Admin.cs" />
-    <Compile Include="controllers\Carro.cs" />
-    <Compile Include="controllers\Viaje.cs" />
     <Compile Include="controllers\Locomotive.cs" />
-    <Compile Include="controllers\MaterialRodante.cs" />
-    <Compile Include="controllers\Producto.cs" />
+    <Compile Include="controllers\Material.cs" />
     <Compile Include="controllers\Station.cs" />
-    <Compile Include="controllers\Tren.cs" />
     <Compile Include="controllers\User.cs" />
     <Compile Include="models\Program.cs" />
-    <Compile Include="models\Sistema.cs" />
     <Compile Include="models\SQLiteDataAccess.cs" />
     <Compile Include="views\AddMaterial.cs">
       <SubType>Form</SubType>

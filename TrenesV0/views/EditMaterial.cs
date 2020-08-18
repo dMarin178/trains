@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TrenesV0.controllers;
 
 namespace TrenesV0.views
 {
@@ -24,15 +23,15 @@ namespace TrenesV0.views
         {
             for(int i = 0; i < stations.Count; i++)
             {
-                cmbEstacion.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
+                cmbEstacion.Items.Add(stations[i].id + "-" + stations[i].nombre);
             }
         }
-        private void displayMateriales(List<Carro> materials)
+        private void displayMateriales(List<Material> materials)
         {
             cmbMaterial.BeginUpdate();
             for (int i = 0; i < materials.Count; i++)
             {
-                cmbMaterial.Items.Add(materials[i].idMaterialR + "-" + materials[i].peso);
+                cmbMaterial.Items.Add(materials[i].id + "-" + materials[i].material);
             }
             cmbMaterial.EndUpdate();
         }
@@ -43,7 +42,7 @@ namespace TrenesV0.views
             string[] selectedStationSplited = selectedStation.Split('-');
             int stationID;
             int.TryParse(selectedStationSplited[0], out stationID);
-            List<Carro> materiales = SQLiteDataAccess.getCarro(stationID);
+            List<Material> materiales = SQLiteDataAccess.getMaterial(stationID);
             displayMateriales(materiales);
         }
 

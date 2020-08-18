@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrenesV0.controllers
-
+namespace TrenesV0
 {
-    public class User
+    class User
     {
         public string rut { get; set; }
         public string password { get; set; }

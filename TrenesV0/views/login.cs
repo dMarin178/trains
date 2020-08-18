@@ -7,8 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TrenesV0.controllers;
-using TrenesV0.models;
 using TrenesV0.views;
 using Menu = TrenesV0.views.Menu;
 
@@ -16,13 +14,9 @@ namespace TrenesV0
 {
     public partial class Login : Form
     {
-        //variable global con el rut del usuario
-        public static string SetValueFortxtUsuario = "";
-        public Sistema system;
         public Login()
         {
             InitializeComponent();
-            system = new Sistema();
         }
 
         private void Login_Load(object sender, EventArgs e)
@@ -36,7 +30,8 @@ namespace TrenesV0
         {
             if (SQLiteDataAccess.getUser(txtUsuario.Text)!=null)
             {
-                if (system.verificarUser(txtUsuario.Text,txtPass.Text))
+                User user = SQLiteDataAccess.getUser(txtUsuario.Text);
+                if (loggUser(user))
                 {
                     errorProvider2.SetError(btnLoggin, "");
                     this.Hide();
@@ -48,7 +43,7 @@ namespace TrenesV0
                 }
                 else
                 {
-                    errorProvider2.SetError(btnLoggin, "Error, usuario y/o contraseña incorrecta");
+                    errorProvider2.SetError(btnLoggin, "Error contraseña incorrecta");
                 }
 
             }
@@ -65,10 +60,6 @@ namespace TrenesV0
             return (user.password == txtPass.Text);
         }
 
-        private Boolean loggAdmin(Admin user)
-        {
-            return (user.password == txtPass.Text);
-        }
         private void txtUsuario_TextChanged(object sender, EventArgs e)
         {
             btnControl(txtUsuario);
@@ -122,31 +113,42 @@ namespace TrenesV0
 
         }
 
-        private void btnAdminLogin_Click(object sender, EventArgs e)
+        /*private void btnAdminLogin_Click(object sender, EventArgs e)
         {
             if (SQLiteDataAccess.getUser(txtUsuario.Text) != null)
             {
-                Admin user = SQLiteDataAccess.getAdmin(txtUsuario.Text);
-                if (loggAdmin(user))
+                User user = SQLiteDataAccess.getUser(txtUsuario.Text);
+                if (loggUser(user))
                 {
-                    SetValueFortxtUsuario = txtUsuario.Text;
-                    errorProvider2.SetError(btnLoggin, "");
-                    this.Hide();
-                    using (views.Menu menuWindow = new views.Menu())
+                    if(rol == "Administrador")
                     {
-                        menuWindow.ShowDialog();
+                        errorProvider2.SetError(btnLoggin, "");
+                        this.Hide();
+                        using (views.Menu menuWindow = new views.Menu())
+                        {
+                            menuWindow.ShowDialog();
+                        }
+                            
                     }
+                    else
+                    {
+                        errorProvider2.SetError(btnAdminLogin, "Error usted no es administrador");
+                    }
+
                 }
                 else
                 {
                     errorProvider2.SetError(btnAdminLogin, "Error contraseña incorrecta");
                 }
+
             }
             else
             {
-                errorProvider2.SetError(btnAdminLogin, "Error usted no es administrador");
+                errorProvider2.SetError(btnAdminLogin, "Error usuario incorrecto");
             }
-        }
+
+
+        }*/
     }
     
 }

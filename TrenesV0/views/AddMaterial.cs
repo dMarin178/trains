@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TrenesV0.controllers;
 
 namespace TrenesV0.views
 {
@@ -17,28 +16,70 @@ namespace TrenesV0.views
         public AddMaterial()
         {
             InitializeComponent();
-            displayEstaciones();
+            display();
         }
 
-        private void displayEstaciones()
+        private void display()
         {
-
             for (int i = 0; i < stations.Count; i++)
             {
-                cmbEstacion.Items.Add(stations[i].nroEstacion + "-" + stations[i].nombre);
+                cmbEstacion.Items.Add(stations[i].id + "-" + stations[i].nombre);
             }
+            comboBox1.Items.Add("Locomotora");
+            comboBox1.Items.Add("Carro");
+            comboBox1.SelectedItem = "Locomotora";
         }
 
         private void cmbEstacion_SelectedIndexChanged(object sender, EventArgs e)
         {
-            /*string selectedStation = (string)cmbEstacion.SelectedItem;
+            string selectedStation = (string)cmbEstacion.SelectedItem;
             string[] selectedStationSplited = selectedStation.Split('-');
-            int stationID;
-            int.TryParse(selectedStationSplited[0], out stationID);
-            List<Material> materiales = SQLiteDataAccess.getMaterial(stationID);
-            */
+            for ( int i=0; i< stations.Count; i++)
+            {
+                if(stations[i].id.ToString() == selectedStationSplited[0])
+                {
+                    label6.Text = "Espacio disponible : " + stations[i].espacio;
+                }
+            }
         }
         private void button1_Click(object sender, EventArgs e)
+        {
+            
+            if ((string)comboBox1.SelectedItem == "Locomotora")
+            {
+                if (txtPeso==null || txtMarca == null || txtFuerza == null)
+                {
+                    
+                }
+            }
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedMaterialRodante = (string)comboBox1.SelectedItem;
+            if(selectedMaterialRodante == "Carro")
+            {
+                txtFuerza.Hide();
+                label5.Hide();
+            }
+            if (selectedMaterialRodante == "Locomotora")
+            {
+                txtFuerza.Show();
+                label5.Show();
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
         {
 
         }
